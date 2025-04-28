@@ -1616,7 +1616,7 @@ function renderTable(results) {
     const tableBody = document.getElementById('scheduleTableBody');
     tableBody.innerHTML = '';
     
-    // 对结果进行排序，先按设备类型，再按设备ID排序，实现聚类展示
+    // 对结果进行排序，先按设备类型，再按设备ID排序，然后按开始时间排序，实现聚类展示
     const sortedResults = [...results].sort((a, b) => {
         // 首先按设备类型排序
         if (a.deviceType !== b.deviceType) {
@@ -1626,7 +1626,14 @@ function renderTable(results) {
         // 然后按设备ID排序，考虑数字部分
         const aIdNum = extractNumber(a.deviceId || '');
         const bIdNum = extractNumber(b.deviceId || '');
-        return aIdNum - bIdNum;
+        if (aIdNum !== bIdNum) {
+            return aIdNum - bIdNum;
+        }
+        
+        // 最后按计划开始时间排序
+        const aStartDate = a.startDate ? new Date(a.startDate).getTime() : 0;
+        const bStartDate = b.startDate ? new Date(b.startDate).getTime() : 0;
+        return aStartDate - bStartDate;
     });
     
     // 跟踪当前的设备类型和设备ID，用于创建分组行
@@ -1752,7 +1759,7 @@ function renderTable(results) {
     }
     
     footerNote.innerHTML = `
-        <div style="margin-bottom: 8px;">表格已按设备类别和设备编号进行聚类分组显示</div>
+        <div style="margin-bottom: 8px;">表格已按设备类别和设备编号进行聚类分组显示，同一设备的任务按计划开始时间排序</div>
         <div>缺少测试时长的委托单无法参与排期</div>
         <div>CR值（紧急比率）= (要求完成时间 - 收样日期) / 测试时长，CR越小表示任务越紧急</div>
     `;
