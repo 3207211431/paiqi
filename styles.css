@@ -945,27 +945,27 @@ th {
 
 /* 甘特图样式优化 - 设备类别和设备编号聚类样式 */
 .gantt_task_row.device-type-0 {
-    background-color: rgba(240, 248, 255, 0.5);
+    background-color: rgba(122, 206, 240, 0.541);
     border-bottom: 1px solid #e0e0f0;
 }
 
 .gantt_task_row.device-type-1 {
-    background-color: rgba(245, 255, 245, 0.5);
+    background-color: rgba(104, 160, 245, 0.5);
     border-bottom: 1px solid #e0f0e0;
 }
 
 .gantt_task_row.device-type-2 {
-    background-color: rgba(255, 245, 245, 0.5);
+    background-color: rgba(40, 162, 233, 0.5);
     border-bottom: 1px solid #f0e0e0;
 }
 
 .gantt_task_row.device-type-3 {
-    background-color: rgba(255, 250, 240, 0.5);
+    background-color: rgba(102, 178, 240, 0.5);
     border-bottom: 1px solid #f0e8d0;
 }
 
 .gantt_task_row.device-type-4 {
-    background-color: rgba(240, 245, 255, 0.5);
+    background-color: rgba(95, 158, 240, 0.5);
     border-bottom: 1px solid #d0e0f0;
 }
 
@@ -1112,12 +1112,12 @@ th {
 /* 设备列样式 */
 .grid-cell-deviceType {
     font-weight: bold;
-    background-color: rgba(240, 240, 240, 0.8);
+    background-color: rgba(100, 172, 240, 0.8);
 }
 
 .grid-cell-deviceId {
     font-weight: bold;
-    background-color: rgba(240, 240, 240, 0.5);
+    background-color: rgba(124, 111, 243, 0.5);
 }
 
 /* 任务颜色样式 */

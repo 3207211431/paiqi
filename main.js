@@ -172,66 +172,66 @@ function handleFileUpload() {
                     }
                 });
                 
-                // 完成读取文件步骤
-                updateStepStatus('reading', 'complete', '文件读取完成');
+            // 完成读取文件步骤
+            updateStepStatus('reading', 'complete', '文件读取完成');
+            
+            // 输出原始数据样例，帮助调试
+            if (orderFileData.length > 0) {
+                console.log("委托数据首条记录样例:", orderFileData[0]);
+            }
+            
+            // 处理设备数据
+            updateStepStatus('device-data', 'pending', '正在处理设备数据...');
+            if (deviceFileData.length > 0) {
+                deviceData = cleanDeviceData(deviceFileData);
+                updateStepStatus('device-data', 'complete', `成功处理 ${deviceData.length} 条设备数据`);
+            } else {
+                updateStepStatus('device-data', 'error', '未找到设备数据');
+            }
+            
+            // 处理委托数据
+            updateStepStatus('order-data', 'pending', '正在处理委托数据...');
+            if (orderFileData.length > 0) {
+                orderData = cleanOrderData(orderFileData);
                 
-                // 输出原始数据样例，帮助调试
-                if (orderFileData.length > 0) {
-                    console.log("委托数据首条记录样例:", orderFileData[0]);
-                }
+                // 统计缺少测试时长的订单数
+                const missingDurations = orderData.filter(item => item.testDuration === null).length;
                 
-                // 处理设备数据
-                updateStepStatus('device-data', 'pending', '正在处理设备数据...');
-                if (deviceFileData.length > 0) {
-                    deviceData = cleanDeviceData(deviceFileData);
-                    updateStepStatus('device-data', 'complete', `成功处理 ${deviceData.length} 条设备数据`);
+                if (missingDurations > 0) {
+                    updateStepStatus('order-data', 'complete', 
+                        `成功处理 ${orderData.length} 条委托数据（其中 ${missingDurations} 条缺少测试时长）`);
                 } else {
-                    updateStepStatus('device-data', 'error', '未找到设备数据');
+                    updateStepStatus('order-data', 'complete', `成功处理 ${orderData.length} 条委托数据`);
                 }
-                
-                // 处理委托数据
-                updateStepStatus('order-data', 'pending', '正在处理委托数据...');
-                if (orderFileData.length > 0) {
-                    orderData = cleanOrderData(orderFileData);
-                    
-                    // 统计缺少测试时长的订单数
-                    const missingDurations = orderData.filter(item => item.testDuration === null).length;
-                    
-                    if (missingDurations > 0) {
-                        updateStepStatus('order-data', 'complete', 
-                            `成功处理 ${orderData.length} 条委托数据（其中 ${missingDurations} 条缺少测试时长）`);
-                    } else {
-                        updateStepStatus('order-data', 'complete', `成功处理 ${orderData.length} 条委托数据`);
-                    }
-                } else {
-                    updateStepStatus('order-data', 'error', '未找到委托数据');
-                }
-                
-                // 检查是否有足够的数据进行排期
-                if (deviceData.length === 0) {
-                    throw new Error('缺少设备数据，请上传包含设备数据的文件');
-                }
-                
-                if (orderData.length === 0) {
-                    throw new Error('缺少委托数据，请上传包含委托数据的文件');
-                }
-                
-                // 执行排期算法
-                updateStepStatus('scheduling', 'pending', '正在执行排期算法...');
-                console.log('开始调用排期算法...');
-                scheduleResults = geneticScheduling(orderData, deviceData);
-                console.log('排期算法执行完成，开始处理结果展示...');
-                
-                // 计算排期成功率
-                const validOrders = orderData.filter(item => item.testDuration !== null && item.testDuration > 0);
-                const successCount = scheduleResults.filter(item => item.status === '已排期' || item.status === '已迁移').length;
-                const successRate = (successCount / validOrders.length * 100).toFixed(1);
-                
+            } else {
+                updateStepStatus('order-data', 'error', '未找到委托数据');
+            }
+            
+            // 检查是否有足够的数据进行排期
+            if (deviceData.length === 0) {
+                throw new Error('缺少设备数据，请上传包含设备数据的文件');
+            }
+            
+            if (orderData.length === 0) {
+                throw new Error('缺少委托数据，请上传包含委托数据的文件');
+            }
+            
+            // 执行排期算法
+            updateStepStatus('scheduling', 'pending', '正在执行排期算法...');
+            console.log('开始调用排期算法...');
+            scheduleResults = geneticScheduling(orderData, deviceData);
+            console.log('排期算法执行完成，开始处理结果展示...');
+            
+            // 计算排期成功率
+            const validOrders = orderData.filter(item => item.testDuration !== null && item.testDuration > 0);
+            const successCount = scheduleResults.filter(item => item.status === '已排期' || item.status === '已迁移').length;
+            const successRate = (successCount / validOrders.length * 100).toFixed(1);
+            
                 updateStepStatus('scheduling', 'complete', `排期完成，成功率: ${successRate}%`);
-                
+            
                 // 更新设备类型过滤器选项
-                updateDeviceTypeFilter();
-                
+            updateDeviceTypeFilter();
+            
                 // 展示数据处理摘要
                 updateDataSummary();
                 
@@ -243,14 +243,14 @@ function handleFileUpload() {
                 
                 // 渲染结果
                 renderResults(scheduleResults);
-                
-            } catch (error) {
+            
+        } catch (error) {
                 console.error('处理数据时出错:', error);
                 updateProcessingStatus('失败');
                 showError(error.message);
-            }
-        })
-        .catch(error => {
+        }
+    })
+    .catch(error => {
             console.error('文件读取失败:', error);
             updateProcessingStatus('失败');
             showError(`文件读取失败: ${error.message}`);
@@ -2036,6 +2036,28 @@ function renderGantt(results) {
         gantt.config.fit_tasks = true; // 自动调整任务大小以适应内容
         gantt.config.scale_height = 50; // 扩大时间刻度高度
         
+        // 设置默认行高和任务高度
+        gantt.config.row_height = 35;
+        gantt.config.bar_height = 22;
+        
+        // 设置任务行ID属性，确保相同设备ID的任务显示在同一行
+        gantt.config.row_property = "deviceId";
+        
+        // 关键配置：强制相同设备ID的任务在同一行
+        gantt.config.group_tasks = true;
+        gantt.config.show_unscheduled = true;
+        
+        // 禁用分支视图，所有任务平铺展示
+        gantt.config.branch_loading = false;
+        gantt.config.show_progress = true;
+        
+        // 禁用任务拖动和缩放，仅用于展示
+        gantt.config.readonly = true;
+        
+        // 确保智能渲染和显示时间范围外的任务
+        gantt.config.smart_rendering = true;
+        gantt.config.show_tasks_outside_timescale = true;
+        
         // 使用完全中文化的时间刻度配置
         gantt.config.scales = [
             {unit: "month", step: 1, format: "%Y年%M"},  // 年月显示
@@ -2045,7 +2067,6 @@ function renderGantt(results) {
         
         // 设置最小尺寸
         gantt.config.min_column_width = 70;
-        gantt.config.row_height = 35;
         
         // 关闭tooltip
         gantt.config.tooltip_timeout = 0; // 禁用默认tooltip
@@ -2053,18 +2074,34 @@ function renderGantt(results) {
         // 为任务行添加数据类型标识，以便应用不同样式
         gantt.templates.task_row_class = function(start, end, task) {
             let classes = [];
+            
+            // 根据设备类型添加类
             if (task.deviceType) {
-                classes.push("device-type-row");
+                const deviceTypeIndex = Math.abs(task.deviceType.hashCode() % 5);
+                classes.push(`device-type-${deviceTypeIndex}`);
             }
-            if (task.deviceId) {
-                classes.push("device-id-row");
+            
+            // 根据任务状态添加类
+            if (task.status) {
+                const status = task.status.toLowerCase();
+                if (status.includes('错误') || status.includes('超出') || status.includes('无效')) {
+                    classes.push('error-task-row');
+                } else if (status.includes('迁移')) {
+                    classes.push('migrated-task-row');
+                } else if (status.includes('警告')) {
+                    classes.push('warning-task-row');
+                } else {
+                    classes.push('normal-task-row');
+                }
             }
-            // 根据设备分类添加不同的颜色类
-            const deviceTypeIndex = task.deviceType ? 
-                Math.abs(task.deviceType.hashCode() % 5) : 0;
-            classes.push(`device-type-${deviceTypeIndex}`);
             
             return classes.join(" ");
+        };
+        
+        // 设置单元格类以在同一设备中显示相同的设备信息
+        gantt.templates.grid_row_class = function(start, end, task) {
+            // 添加标记以便CSS可以更容易地选择
+            return `device-${task.deviceId.replace(/[^a-zA-Z0-9]/g, '-')}`;
         };
         
         // 扩展String原型，添加hashCode方法用于生成唯一标识
@@ -2079,34 +2116,61 @@ function renderGantt(results) {
             };
         }
         
-        // 设置列配置
+        // 设置列配置 
         gantt.config.columns = [
-            {name: "deviceType", label: "设备类别", width: 100, 
+            {name: "deviceType", label: "设备类别", width: 120, align: "center", 
                 template: function(task) {
                     return task.deviceType || "";
+                },
+                sort: function(a, b) {
+                    return a.deviceType.localeCompare(b.deviceType);
                 }
             },
             {name: "deviceId", label: "设备编号", width: 100, align: "center", 
                 template: function(task) {
                     return task.deviceId || "";
                 }
-            },
-            {name: "text", label: "委托单号", align: "center", width: 150},
-            {name: "duration", label: "测试时长", align: "center", width: 100, 
-                template: function(task) {
-                    return (task.testDuration || task.duration) + "小时";
-                }
             }
         ];
-        
-        // 只设置基本的视觉样式
-        gantt.templates.task_class = function() {
-            return "tech-blue-task";
+
+        // 设置任务文本模板
+        gantt.templates.task_text = function(start, end, task) {
+            // 显示委托单号
+            return task.text || "";
         };
         
-        // 简化的数据格式
-        const ganttData = {
-            data: []
+        // 添加单元格样式模板，突出显示设备信息
+        gantt.templates.grid_cell_class = function(task, column) {
+            if (column === "deviceType" || column === "deviceId") {
+                return "device-info-cell";
+            }
+            return "";
+        };
+        
+        // 设置任务样式
+        gantt.templates.task_class = function(start, end, task) {
+            // 根据任务状态返回不同的样式类
+            if (task.status) {
+                const status = task.status.toLowerCase();
+                if (status.includes('错误') || status.includes('超出') || status.includes('无效')) {
+                    return "error-task";
+                } else if (status.includes('迁移')) {
+                    return "migrated-task";
+                } else if (status.includes('警告')) {
+                    return "warning-task";
+                }
+            }
+            return "normal-task";
+        };
+        
+        // 关键设置：自定义行ID生成函数，确保同一设备的任务在同一行
+        gantt.getRowNode = function(id) {
+            return document.querySelector(".gantt_row[data-row-id='" + id + "']");
+        };
+        
+        gantt.getRowId = function(task) {
+            // 使用deviceId作为行ID，而不是任务ID
+            return task.deviceId || task.id;
         };
         
         // 对结果排序 - 简化排序逻辑
@@ -2115,9 +2179,9 @@ function renderGantt(results) {
             return a.deviceType.localeCompare(b.deviceType);
         });
         
-        // 添加任务数据 - 确保每个字段都有有效值
-        sortedResults.forEach((result, index) => {
-            if (!result.startDate || !result.endDate) return; // 跳过无效数据
+        // 转换数据格式为甘特图可用格式
+        const formattedData = sortedResults.map((result, index) => {
+            if (!result.startDate || !result.endDate) return null; // 跳过无效数据
             
             try {
                 // 安全解析日期
@@ -2126,30 +2190,29 @@ function renderGantt(results) {
                 
                 if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
                     console.warn('跳过无效日期的任务:', result);
-                    return; // 跳过无效日期
+                    return null; // 跳过无效日期
                 }
-                
-                // 格式化日期
-                const start_date = formatGanttDate(startDate);
-                const end_date = formatGanttDate(endDate);
                 
                 // 确保测试时长是数值
                 let testDuration = parseFloat(result.testDuration);
                 if (isNaN(testDuration)) testDuration = 1; // 默认至少1小时
                 
-                // 创建甘特图任务项，保留所有原始数据用于工具提示
-                ganttData.data.push({
+                // 返回标准化的数据格式
+                return {
                     id: `task_${index}`,
                     text: result.orderNumber || result.orderId || '未命名任务',
-                    start_date: start_date,
-                    end_date: end_date,
+                    start_date: formatGanttDate(startDate),
+                    end_date: formatGanttDate(endDate),
+                    device_id: result.deviceId || '未分配',
+                    device_type: result.deviceType || '未知类型',
+                    // 同时添加与甘特图配置匹配的属性名
                     deviceId: result.deviceId || '未分配',
                     deviceType: result.deviceType || '未知类型',
                     testDuration: testDuration,
+                    duration: testDuration,
                     progress: 0.5, // 固定进度为50%
-                    open: true,
-                    // 保存原始数据用于详细提示
                     status: result.status,
+                    // 保存原始数据用于详细提示
                     cr: result.cr,
                     dataQuality: result.dataQuality,
                     orderNumber: result.orderNumber,
@@ -2160,11 +2223,15 @@ function renderGantt(results) {
                     projectName: result.projectName || result.project,
                     projectId: result.projectId || result.projectNumber,
                     sampleName: result.sampleName || result.sample || result.materialName
-                });
+                };
             } catch (err) {
                 console.warn('处理任务数据时出错:', err, result);
+                return null;
             }
-        });
+        }).filter(task => task !== null); // 过滤掉无效数据
+        
+        // 使用prepareGanttTasks函数处理数据，确保每个设备编号只有一行
+        const ganttData = prepareGanttTasks(formattedData);
         
         // 检查是否生成了有效的任务数据
         if (ganttData.data.length === 0) {
@@ -2177,204 +2244,224 @@ function renderGantt(results) {
         // 添加自定义样式
         const styleEl = document.createElement('style');
         styleEl.textContent = `
-            .tech-blue-task {
-                background: linear-gradient(to right, #134e5e, #2a83a2) !important;
-                border-radius: 3px !important;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
-                border: 1px solid #0a3d4d !important;
-                cursor: pointer !important;
+            /* 改造整体背景和页面样式 */
+            #ganttChart {
+                background: linear-gradient(135deg, #041429 0%, #0a2a4d 100%) !important;
+                box-shadow: 0 0 25px rgba(0, 149, 255, 0.15) !important;
+                border: 1px solid rgba(45, 185, 255, 0.3) !important;
             }
             
-            .tech-blue-task .gantt_task_content {
+            /* 设置单元格隐藏效果，用于合并设备类别列 */
+            .device-info-cell {
+                font-weight: bold !important;
+                color: #0a3862 !important;
+                background-color: rgba(25, 118, 210, 0.05) !important;
+            }
+            
+            /* 设置头部区域样式 */
+            .gantt_grid_scale, .gantt_task_scale {
+                background: linear-gradient(to bottom, #0a3862 0%, #072c4e 100%) !important;
+                border-bottom: 1px solid rgba(67, 198, 255, 0.5) !important;
+            }
+            
+            /* 相同设备ID的行使用相同背景色 */
+            .gantt_row[class*="device-"] {
+                background-color: rgba(7, 36, 64, 0.5) !important;
+                border-bottom: 1px solid rgba(67, 198, 255, 0.2) !important;
+            }
+            
+            /* 网格与数据区域样式 */
+            .gantt_row, .gantt_task_row {
+                background-color: rgba(7, 36, 64, 0.5) !important;
+                border-bottom: 1px solid rgba(67, 198, 255, 0.2) !important;
+            }
+            
+            .gantt_row:nth-child(even), .gantt_task_row:nth-child(even) {
+                background-color: rgba(9, 44, 78, 0.5) !important;
+            }
+            
+            .gantt_row:hover, .gantt_task_row:hover {
+                background-color: rgba(16, 62, 105, 0.8) !important;
+            }
+            
+            /* 单元格与文本样式 */
+            .gantt_cell {
+                border-right: 1px solid rgba(67, 198, 255, 0.2) !important;
+                color: #d3f0ff !important;
+                text-shadow: 0 0 5px rgba(67, 198, 255, 0.4) !important;
+            }
+            
+            /* 普通任务样式 */
+            .normal-task {
+                background: linear-gradient(135deg, #0062cc, #00a1ff) !important;
+                border-radius: 4px !important;
+                box-shadow: 0 0 15px rgba(0, 183, 255, 0.5) !important;
+                border: 1px solid rgba(99, 214, 255, 0.7) !important;
+                cursor: pointer !important;
+                height: 22px !important;
+            }
+            
+            /* 错误任务样式 */
+            .error-task {
+                background: linear-gradient(135deg, #d32f2f, #f44336) !important;
+                border-radius: 4px !important;
+                box-shadow: 0 0 15px rgba(244, 67, 54, 0.5) !important;
+                border: 1px solid rgba(255, 99, 99, 0.7) !important;
+                cursor: pointer !important;
+                height: 22px !important;
+            }
+            
+            /* 迁移任务样式 */
+            .migrated-task {
+                background: linear-gradient(135deg, #ff8f00, #ffc107) !important;
+                border-radius: 4px !important;
+                box-shadow: 0 0 15px rgba(255, 193, 7, 0.5) !important;
+                border: 1px solid rgba(255, 214, 99, 0.7) !important;
+                cursor: pointer !important;
+                height: 22px !important;
+            }
+            
+            /* 警告任务样式 */
+            .warning-task {
+                background: linear-gradient(135deg, #f57c00, #ff9800) !important;
+                border-radius: 4px !important;
+                box-shadow: 0 0 15px rgba(255, 152, 0, 0.5) !important;
+                border: 1px solid rgba(255, 183, 99, 0.7) !important;
+                cursor: pointer !important;
+                height: 22px !important;
+            }
+            
+            /* 任务悬停效果 */
+            .normal-task:hover, .error-task:hover, .migrated-task:hover, .warning-task:hover {
+                box-shadow: 0 0 20px rgba(0, 183, 255, 0.7) !important;
+                transform: translateY(-1px) !important;
+            }
+            
+            /* 任务进度条 */
+            .gantt_task_progress {
+                background: linear-gradient(to right, rgba(144, 238, 255, 0.4), rgba(0, 183, 255, 0.6)) !important;
+                box-shadow: 0 0 10px rgba(0, 225, 255, 0.4) !important;
+                border-right: 1px solid rgba(255, 255, 255, 0.4) !important;
+            }
+            
+            /* 任务条文本样式 */
+            .gantt_task_content {
                 color: white !important;
                 font-weight: 500 !important;
-                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+                text-shadow: 0 0 8px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+                padding: 0 4px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                line-height: 22px !important;
             }
             
+            /* 关键样式：同一设备ID任务合并 */
+            .gantt_grid_data .gantt_row {
+                border-bottom: 1px solid rgba(67, 198, 255, 0.2) !important;
+            }
+            
+            /* 隐藏空白行 */
+            .gantt_row:empty {
+                display: none !important;
+            }
+            
+            /* 强化相同设备ID的行标识 */
+            .gantt_row.same-device-id {
+                background-color: rgba(25, 118, 210, 0.05) !important;
+            }
+            
+            /* 时间轴刻度线条 */
+            .gantt_task_line {
+                border-color: rgba(67, 198, 255, 0.3) !important;
+            }
+            
+            /* 链接线样式 */
+            .gantt_link_line .gantt_line_wrapper div {
+                background-color: rgba(67, 198, 255, 0.6) !important;
+                box-shadow: 0 0 6px rgba(67, 198, 255, 0.4) !important;
+            }
+            
+            .gantt_link_arrow {
+                border-color: rgba(67, 198, 255, 0.8) !important;
+            }
+            
+            /* 缩放滑动条样式 */
+            #zoomSlider {
+                -webkit-appearance: none;
+                height: 6px;
+                background: linear-gradient(90deg, #041429, #0078f0);
+                border-radius: 3px;
+                outline: none;
+                border: 1px solid rgba(67, 198, 255, 0.5);
+                box-shadow: 0 0 10px rgba(0, 183, 255, 0.3);
+            }
+            
+            #zoomSlider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 16px;
+                height: 16px;
+                background: #00a1ff;
+                border-radius: 50%;
+                cursor: pointer;
+                box-shadow: 0 0 15px rgba(0, 183, 255, 0.6);
+            }
+            
+            #ganttZoomControl {
+                background: linear-gradient(180deg, rgba(4, 20, 41, 0) 0%, rgba(4, 20, 41, 0.7) 100%);
+                padding: 15px 20px;
+                border-top: 1px solid rgba(67, 198, 255, 0.3);
+            }
+            
+            /* 修复空消息样式 */
             .empty-gantt-message {
                 padding: 20px;
                 text-align: center;
-                color: #555;
+                color: #d3f0ff;
                 font-size: 16px;
-                background-color: #f8f9fa;
+                background-color: rgba(9, 44, 78, 0.5);
                 border-radius: 4px;
                 margin-top: 20px;
+                text-shadow: 0 0 5px rgba(67, 198, 255, 0.4);
+                border: 1px solid rgba(67, 198, 255, 0.3);
             }
             
-            .gantt_grid_head_cell {
-                font-weight: bold;
-                background-color: #f0f4f9;
+            /* 任务条进度区域样式 */
+            .gantt_task_progress {
+                background: linear-gradient(to right, rgba(144, 238, 255, 0.4), rgba(0, 183, 255, 0.6)) !important;
+                box-shadow: 0 0 10px rgba(0, 225, 255, 0.4) !important;
+                border-right: 1px solid rgba(255, 255, 255, 0.4) !important;
             }
             
-            /* 增强任务行分隔线 */
-            .gantt_row {
-                border-bottom: 1px solid #e0e0e0 !important;
+            /* 任务条文本样式 */
+            .gantt_task_content {
+                color: white !important;
+                font-weight: 500 !important;
+                text-shadow: 0 0 8px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+                padding: 0 4px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
             }
             
-            /* 偶数行背景色加深，提高行区分度 */
-            .gantt_row:nth-child(even) {
-                background-color: #f5f7fa !important;
-            }
-            
-            /* 行悬停效果 */
-            .gantt_row:hover {
-                background-color: #eaf1f7 !important;
-            }
-            
-            /* 设备类型行特殊显示 */
-            .gantt_row[data-type="deviceType"] {
-                border-bottom: 2px solid #bbdefb !important;
-                background-color: rgba(25, 118, 210, 0.08) !important;
-            }
-            
-            /* 设备行特殊显示 */
+            /* 设备行样式 */
             .gantt_row[data-type="device"] {
-                border-bottom: 1px dashed #90caf9 !important;
+                background-color: rgba(25, 118, 210, 0.05) !important;
+                border-bottom: 1px solid rgba(25, 118, 210, 0.1) !important;
             }
             
-            /* 任务行左侧边框增强 */
-            .gantt_cell {
-                border-right: 1px solid #e0e0e0 !important;
+            /* 委托任务样式 */
+            .gantt_task_line {
+                border-radius: 3px !important;
+                height: 20px !important;
+                margin-top: 2px !important;
             }
             
-            /* 自定义模态对话框样式 */
-            .gantt-task-modal {
-                display: none;
-                position: fixed;
-                z-index: 9999;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                overflow: auto;
-                background-color: rgba(0,0,0,0.4);
-            }
-            
-            .modal-content {
-                position: relative;
-                background-color: #fefefe;
-                margin: 10% auto;
-                padding: 20px;
-                border: 1px solid #e0e0e0;
-                border-radius: 8px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-                width: 600px;
-                max-width: 90%;
-                font-family: 'Microsoft YaHei', sans-serif;
-                animation: modalFadeIn 0.3s ease-out;
-            }
-            
-            @keyframes modalFadeIn {
-                from {opacity: 0; transform: translateY(-50px);}
-                to {opacity: 1; transform: translateY(0);}
-            }
-            
-            .modal-header {
-                position: relative;
-                border-bottom: 1px solid #e0e0e0;
-                padding-bottom: 15px;
-                margin-bottom: 15px;
-            }
-            
-            .modal-title {
-                font-size: 18px;
-                font-weight: bold;
-                color: #134e5e;
-                margin: 0;
-                padding-right: 30px;
-            }
-            
-            .modal-close {
-                position: absolute;
-                right: 0;
-                top: 0;
-                font-size: 24px;
-                font-weight: bold;
-                color: #aaa;
-                cursor: pointer;
-            }
-            
-            .modal-close:hover {
-                color: #134e5e;
-            }
-            
-            .modal-body {
-                max-height: 500px;
-                overflow-y: auto;
-            }
-            
-            .detail-section {
-                margin-bottom: 20px;
-            }
-            
-            .detail-section-title {
-                font-size: 15px;
-                font-weight: bold;
-                color: #0d6efd;
-                padding: 5px 10px;
-                background-color: #f0f8ff;
-                border-radius: 4px;
-                margin-bottom: 10px;
-            }
-            
-            .detail-table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-            
-            .detail-table tr:nth-child(even) {
-                background-color: #f9f9f9;
-            }
-            
-            .detail-table tr:hover {
-                background-color: #f0f0f0;
-            }
-            
-            .detail-label {
-                width: 130px;
-                font-weight: bold;
-                padding: 8px 10px;
-                text-align: right;
-                vertical-align: top;
-                color: #555;
-                border-bottom: 1px solid #efefef;
-            }
-            
-            .detail-value {
-                padding: 8px 10px;
-                color: #333;
-                text-align: left;
-                border-bottom: 1px solid #efefef;
-            }
-            
-            .status-badge {
-                display: inline-block;
-                padding: 3px 8px;
-                border-radius: 4px;
-                font-size: 12px;
-                font-weight: bold;
-                color: white;
-            }
-            
-            .status-scheduled {
-                background-color: #28a745;
-            }
-            
-            .status-overdue {
-                background-color: #dc3545;
-            }
-            
-            .status-incompatible {
-                background-color: #ffc107;
-                color: #333;
-            }
-            
-            .status-migrated {
-                background-color: #17a2b8;
-            }
-            
-            .status-invalid {
-                background-color: #6c757d;
+            /* 任务条悬停效果 */
+            .gantt_task_line:hover {
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+                transform: translateY(-1px) !important;
             }
         `;
         document.head.appendChild(styleEl);
@@ -2421,6 +2508,86 @@ function renderGantt(results) {
             console.log('开始加载甘特图数据...');
             gantt.parse(ganttData);
             console.log('甘特图数据加载并渲染完成');
+
+            // 甘特图加载完成后，运行一个任务合并处理函数
+            setTimeout(() => {
+                // 处理相同设备ID的任务，确保它们显示在同一行
+                const deviceRows = {};
+                const rows = document.querySelectorAll('.gantt_row');
+                
+                // 查找并标记所有行
+                rows.forEach(row => {
+                    try {
+                        const rowId = row.getAttribute('data-row-id');
+                        if (rowId) {
+                            // 记录行ID和行元素，用于后续合并处理
+                            if (!deviceRows[rowId]) {
+                                deviceRows[rowId] = [];
+                            }
+                            deviceRows[rowId].push(row);
+                            
+                            // 为设备行添加特殊样式
+                            row.classList.add('device-row');
+                        }
+                    } catch (e) {
+                        console.warn('处理行时出错:', e);
+                    }
+                });
+                
+                // 处理任务元素，确保它们与对应行关联
+                const tasks = document.querySelectorAll('.gantt_task_line');
+                tasks.forEach(task => {
+                    try {
+                        const taskId = task.getAttribute('task_id');
+                        const taskData = gantt.getTask(taskId);
+                        if (taskData && taskData.deviceId) {
+                            // 为任务添加设备ID属性，辅助样式和脚本处理
+                            task.setAttribute('data-device-id', taskData.deviceId);
+                        }
+                    } catch (e) {
+                        console.warn('处理任务时出错:', e);
+                    }
+                });
+                
+                console.log('任务合并处理完成');
+            }, 300);
+
+            // 添加缩放轴逻辑
+            const slider = document.getElementById('zoomSlider');
+            if (slider) {
+                // 定义缩放级别
+                const zoomLevels = [
+                    { name: "概览", scale_height: 50, min_column_width: 70, scales: [
+                        {unit: "month", step: 1, format: "%Y年%M"},
+                        {unit: "week", step: 1, format: "第%W周"}
+                    ]},
+                    { name: "中等", scale_height: 50, min_column_width: 70, scales: [
+                        {unit: "week", step: 1, format: "第%W周"},
+                        {unit: "day", step: 1, format: "%j日 %D"}
+                    ]},
+                    { name: "详细", scale_height: 50, min_column_width: 70, scales: [
+                        {unit: "day", step: 1, format: "%j日 %D"},
+                        {unit: "hour", step: 1, format: "%H:%i"}
+                    ]}
+                ];
+                // 初始化滑动条参数
+                slider.min = 0;
+                slider.max = zoomLevels.length - 1;
+                slider.value = 1;
+                // 切换缩放函数
+                function updateScale(levelIndex) {
+                    const level = zoomLevels[levelIndex];
+                    gantt.config.scales = level.scales;
+                    gantt.config.scale_height = level.scale_height;
+                    gantt.config.min_column_width = level.min_column_width;
+                    gantt.render();
+                }
+                slider.addEventListener('input', function() {
+                    updateScale(+this.value);
+                });
+                // 初始显示
+                updateScale(slider.value);
+            }
         } catch (e) {
             console.error('甘特图初始化或数据加载失败:', e);
             ganttChart.innerHTML = `<div class="empty-gantt-message">甘特图渲染失败: ${e.message}</div>`;
@@ -2758,25 +2925,75 @@ function findFieldIndex(headers, possibleNames) {
 
 // 准备甘特图时添加排序和分组逻辑
 function prepareGanttTasks(dataList) {
-    // ... existing code ...
+    // 创建甘特图数据结构
+    const ganttTasks = {
+        data: [],
+        links: []
+    };
     
-    // 对任务进行排序
-    ganttTasks.data.sort((a, b) => {
-        // 首先按设备类型排序
-        if (a.device_type !== b.device_type) {
-            return a.device_type.localeCompare(b.device_type);
+    // 按设备类型和设备编号分组
+    const deviceGroups = {};
+    
+    // 先对数据进行排序
+    dataList.sort((a, b) => {
+        // 按设备类型和设备编号排序
+        const deviceTypeA = a.device_type || a.deviceType;
+        const deviceTypeB = b.device_type || b.deviceType;
+        const deviceIdA = a.device_id || a.deviceId;
+        const deviceIdB = b.device_id || b.deviceId;
+        
+        if (deviceTypeA !== deviceTypeB) {
+            return deviceTypeA.localeCompare(deviceTypeB);
         }
         
-        // 其次按设备编号排序（将数字部分作为数值比较）
-        const aNum = extractNumber(a.device_id);
-        const bNum = extractNumber(b.device_id);
-        
-        if (aNum !== bNum) {
-            return aNum - bNum;
+        if (deviceIdA !== deviceIdB) {
+            return deviceIdA.localeCompare(deviceIdB);
         }
         
-        // 最后按委托单号排序
-        return a.text.localeCompare(b.text);
+        // 同一设备按开始时间排序
+        const startA = new Date(a.start_date);
+        const startB = new Date(b.start_date);
+        return startA - startB;
+    });
+    
+    // 遍历排序后的数据，直接创建任务
+    dataList.forEach(task => {
+        // 兼容两种不同的属性名
+        const deviceType = task.device_type || task.deviceType;
+        const deviceId = task.device_id || task.deviceId;
+        
+        if (!deviceType || !deviceId) {
+            console.warn('跳过缺少设备信息的任务:', task);
+            return;
+        }
+        
+        // 创建任务，确保每个任务都有设备ID属性
+        const ganttTask = {
+            id: task.id || `task_${Math.random().toString(36).substr(2, 9)}`,
+            text: task.text,
+            start_date: task.start_date,
+            end_date: task.end_date,
+            // 关键：保持deviceId属性一致，确保相同设备的任务在同一行
+            deviceId: deviceId,
+            deviceType: deviceType,
+            // 其他属性
+            progress: task.progress || 0,
+            duration: task.duration,
+            testDuration: task.testDuration,
+            status: task.status,
+            // 保留原始信息
+            orderNumber: task.orderNumber,
+            orderId: task.orderId,
+            organization: task.organization,
+            clientName: task.clientName,
+            projectName: task.projectName,
+            projectId: task.projectId,
+            sampleName: task.sampleName,
+            cr: task.cr,
+            dataQuality: task.dataQuality
+        };
+        
+        ganttTasks.data.push(ganttTask);
     });
     
     return ganttTasks;
