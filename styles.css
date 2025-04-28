@@ -1,0 +1,1147 @@
+/* 全局样式 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f7fa;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: #1976d2;
+    color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+main {
+    max-width: 90%;
+    width: 90%;
+    margin: 0 auto;
+    padding: 2rem;
+    flex: 1;
+}
+
+h1, h2 {
+    margin-bottom: 1rem;
+}
+
+section {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+footer {
+    background-color: #f5f5f5;
+    padding: 1rem 2rem;
+    text-align: center;
+    border-top: 1px solid #e0e0e0;
+    margin-top: auto;
+    width: 100%;
+}
+
+footer a {
+    color: #1976d2;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* 右上角上传控件样式 */
+.header-upload-container {
+    position: relative;
+}
+
+.upload-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 300px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+    z-index: 1000;
+    display: none;
+}
+
+.upload-panel.show {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.panel-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.close-btn {
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #999;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+/* 上传区域样式 */
+.file-upload {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+}
+
+.file-upload + .file-upload {
+    margin-top: 0.5rem;
+}
+
+.file-label {
+    display: inline-block;
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    text-align: center;
+}
+
+.file-label:hover {
+    background-color: #d5d5d5;
+}
+
+.file-label span {
+    margin-right: 0.5rem;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+#deviceFileName, #orderFileName {
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: block;
+    font-size: 0.9rem;
+    padding: 0.3rem 0;
+}
+
+.file-list {
+    display: block;
+    margin-top: 5px;
+    word-break: break-all;
+}
+
+.clear-files-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-top: 5px;
+    float: right;
+}
+
+.clear-files-btn:hover {
+    background-color: #d32f2f;
+}
+
+.upload-actions {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.upload-actions .btn-primary,
+.upload-actions .btn-outline {
+    flex: 1;
+    text-align: center;
+}
+
+.upload-info {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #666;
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+}
+
+/* 按钮样式 */
+button, .btn-outline {
+    cursor: pointer;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    border: none;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #1976d2;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #1565c0;
+}
+
+.btn-secondary {
+    background-color: #546e7a;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #455a64;
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid #bdbdbd;
+    color: #616161;
+}
+
+.btn-outline:hover {
+    background-color: #f5f5f5;
+}
+
+.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 处理中样式 */
+.processing-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+.processing-indicator p {
+    margin-top: 1rem;
+    font-size: 1rem;
+    color: #555;
+    text-align: center;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #1976d2;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 处理步骤样式 */
+.processing-steps {
+    margin-top: 2rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.step {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px dashed #e0e0e0;
+}
+
+.step:last-child {
+    border-bottom: none;
+}
+
+.step-status {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+.step-info {
+    flex: 1;
+}
+
+.step-name {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+}
+
+.step-detail {
+    display: block;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.step.complete .step-status {
+    color: #4caf50;
+}
+
+.step.pending .step-status {
+    color: #ff9800;
+}
+
+.step.error .step-status {
+    color: #f44336;
+}
+
+/* 数据处理摘要样式 */
+.data-summary-section {
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    width: 100%;
+}
+
+.summary-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.summary-item {
+    flex: 1;
+    min-width: 250px;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.summary-item h3 {
+    font-size: 1rem;
+    color: #1976d2;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.summary-item p {
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+    color: #555;
+}
+
+/* 横向筛选条件样式 */
+.filter-controls.horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    width: 100%;
+}
+
+.filter-controls.horizontal .filter-group {
+    flex: 1;
+    min-width: 150px;
+    margin-bottom: 0;
+}
+
+.filter-group {
+    margin-bottom: 1rem;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.filter-controls.horizontal .filter-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.date-range {
+    flex: 2 !important;
+    min-width: 300px !important;
+}
+
+.date-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.date-inputs input {
+    flex: 1;
+}
+
+.date-inputs span {
+    color: #666;
+    white-space: nowrap;
+}
+
+input[type="text"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+select {
+    background-color: white;
+}
+
+.filter-section {
+    margin-top: -1rem;
+    margin-bottom: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    width: 100%;
+}
+
+/* 标签页样式 */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    position: relative;
+    cursor: pointer;
+    color: #666;
+}
+
+.tab-btn.active {
+    color: #1976d2;
+    font-weight: 500;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #1976d2;
+}
+
+.tab-pane {
+    display: none;
+    width: 100%;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.tab-content {
+    width: 100%;
+}
+
+/* 甘特图容器 */
+.gantt-container {
+    background-color: white;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+/* 表格容器 */
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+    background-color: #f5f5f5;
+    font-weight: 500;
+    color: #333;
+}
+
+/* 结果区域样式 */
+.results-section {
+    padding-bottom: 0;
+    width: 100%;
+}
+
+/* 移动端适配 */
+@media (max-width: 1200px) {
+    main {
+        max-width: 95%;
+        width: 95%;
+    }
+}
+
+@media (max-width: 768px) {
+    main {
+        max-width: 100%;
+        width: 100%;
+        padding: 1rem;
+    }
+    
+    header {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .header-upload-container {
+        margin-top: 1rem;
+        align-self: flex-end;
+    }
+    
+    .upload-panel {
+        width: 280px;
+        right: -1rem;
+    }
+    
+    .filter-controls.horizontal {
+        flex-direction: column;
+    }
+    
+    .filter-controls.horizontal .filter-group {
+        width: 100%;
+    }
+    
+    .date-range {
+        width: 100% !important;
+    }
+    
+    .date-inputs {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .summary-container {
+        flex-direction: column;
+    }
+    
+    .summary-item {
+        width: 100%;
+    }
+}
+
+/* 表格样式 */
+.table-container {
+    overflow-x: auto;
+    position: relative;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background-color: #f5f7fa;
+    font-weight: 500;
+}
+
+/* 表格脚注 */
+.table-footer-note {
+    padding: 1rem;
+    font-size: 0.85rem;
+    color: #666;
+    font-style: italic;
+}
+
+/* 自动计算字段样式 */
+.auto-calculated {
+    color: #ff6600;
+    font-style: italic;
+}
+
+.missing-data {
+    color: #cc0000;
+    font-weight: bold;
+}
+
+/* 表格行样式 */
+.error-row {
+    background-color: #ffe0e0;
+}
+
+.migrated-row {
+    background-color: #e0f0ff;
+}
+
+.warning-row {
+    background-color: #fff8e0;
+}
+
+.missing-duration-row {
+    background-color: #f0e0ff;
+}
+
+/* 错误提示样式 */
+.error-container {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background-color: #ffebee;
+    border-radius: 4px;
+    color: #c62828;
+}
+
+.error-icon {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ef5350;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 甘特图任务样式 */
+.error-task {
+    background-color: #ffcdd2 !important;
+    border: 1px solid #e57373 !important;
+}
+
+.migrated-task {
+    background-color: #fff9c4 !important;
+    border: 1px solid #ffee58 !important;
+}
+
+/* 甘特图样式增强 */
+#ganttChart {
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    background-color: #f8fafc;
+    overflow: hidden;
+    margin-top: 1rem;
+    position: relative;
+}
+
+/* 设备类型组样式 */
+.device-type-group {
+    background-color: rgba(25, 118, 210, 0.08);
+    border-left: 4px solid #1976d2;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* 设备组样式 */
+.device-group {
+    background-color: rgba(96, 125, 139, 0.08);
+    border-left: 3px solid #607d8b;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* 普通任务样式 */
+.normal-task {
+    background-color: rgba(33, 150, 243, 0.8);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 异常任务样式 */
+.error-task {
+    background-color: rgba(244, 67, 54, 0.8);
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(244, 67, 54, 0.3);
+}
+
+/* 已迁移任务样式 */
+.migrated-task {
+    background-color: rgba(255, 193, 7, 0.8);
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+}
+
+/* 警告任务样式 */
+.warning-task {
+    background-color: rgba(255, 152, 0, 0.8);
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(255, 152, 0, 0.3);
+}
+
+/* 设备类型行样式 */
+.device-type-row {
+    font-weight: 600;
+    background-color: rgba(25, 118, 210, 0.08);
+    border-bottom: 1px solid rgba(25, 118, 210, 0.2);
+}
+
+/* 设备行样式 */
+.device-row {
+    font-weight: 500;
+    background-color: rgba(96, 125, 139, 0.03);
+}
+
+/* 增强工具提示样式 */
+.gantt_tooltip {
+    padding: 12px;
+    border-radius: 6px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 13px;
+    line-height: 1.5;
+    z-index: 1000;
+    max-width: 280px;
+    backdrop-filter: blur(5px);
+}
+
+/* 工具提示标题 */
+.tooltip-title {
+    font-weight: 600;
+    color: #1976d2;
+    margin-bottom: 2px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 2px;
+}
+
+/* 工具提示子标题 */
+.tooltip-subtitle {
+    font-weight: 500;
+    color: #546e7a;
+    margin-top: 8px;
+    margin-bottom: 2px;
+}
+
+/* 工具提示内容 */
+.tooltip-content {
+    color: #333;
+    margin-left: 4px;
+    margin-bottom: 4px;
+}
+
+/* 错误状态 */
+.tooltip-content.error {
+    color: #f44336;
+    font-weight: 500;
+}
+
+/* 迁移状态 */
+.tooltip-content.migrated {
+    color: #ff9800;
+    font-weight: 500;
+}
+
+/* 表头样式 */
+.gantt_grid_scale, .gantt_grid_head_cell {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    font-weight: 600;
+    border-bottom: 1px solid #bbdefb;
+}
+
+/* 周末样式 */
+.gantt_scale_cell.weekend, .weekend {
+    background-color: rgba(128, 128, 128, 0.1);
+}
+
+/* 表格单元格样式 */
+.grid-cell-device {
+    color: #455a64;
+    font-weight: 500;
+}
+
+.grid-cell-order {
+    color: #607d8b;
+}
+
+/* 甘特图行鼠标悬停效果 */
+.gantt_row:hover {
+    background-color: rgba(33, 150, 243, 0.05);
+}
+
+/* 甘特图任务鼠标悬停效果 */
+.gantt_task_line:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+}
+
+/* 任务颜色变化 */
+.task-color-0 {
+    background-color: rgba(33, 150, 243, 0.8); /* 蓝色 */
+}
+.task-color-1 {
+    background-color: rgba(76, 175, 80, 0.8); /* 绿色 */
+}
+.task-color-2 {
+    background-color: rgba(156, 39, 176, 0.8); /* 紫色 */
+}
+.task-color-3 {
+    background-color: rgba(0, 188, 212, 0.8); /* 青色 */
+}
+.task-color-4 {
+    background-color: rgba(121, 85, 72, 0.8); /* 棕色 */
+}
+
+/* 时间刻度样式优化 */
+.gantt_scale_line {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    background-color: #f5f7fa;
+}
+
+/* 年月标题样式 */
+.gantt_scale_cell {
+    color: #455a64;
+    font-weight: 600;
+}
+
+/* 日期标题样式 */
+.gantt_scale_line:nth-child(2) .gantt_scale_cell {
+    color: #607d8b;
+    font-weight: 400;
+}
+
+/* 今日高亮 */
+.gantt_today {
+    background-color: rgba(33, 150, 243, 0.15);
+}
+
+/* 设备类别列样式 */
+.grid-cell-device-type {
+    color: #1976d2;
+    font-weight: 600;
+    background-color: rgba(25, 118, 210, 0.03);
+}
+
+/* 优化缩进显示，达到横向展开效果 */
+.gantt_grid_data .gantt_row.gantt_parent .gantt_cell.gantt_cell_tree {
+    padding-left: 0px !important;
+}
+
+/* 设备行的任务编号单元格减少缩进 */
+.device-row .gantt_cell {
+    padding-left: 5px !important;
+}
+
+/* 设备类型分组行样式强调 */
+.device-type-row {
+    font-weight: 600;
+    background-color: rgba(25, 118, 210, 0.08);
+    border-bottom: 1px solid rgba(25, 118, 210, 0.2);
+}
+
+/* 增强甘特图垂直分隔线 */
+.gantt_grid_scale, .gantt_task_scale {
+    border-right: 1px solid #bbdefb;
+}
+
+/* 行与列交叉区域样式增强 */
+.gantt_grid_data .gantt_row {
+    border-top: 1px solid rgba(187, 222, 251, 0.3);
+}
+
+/* 优化展开收起按钮的样式 */
+.gantt_tree_icon.gantt_open,
+.gantt_tree_icon.gantt_close {
+    width: 18px !important;
+    height: 18px !important;
+    line-height: 18px !important;
+    background-color: rgba(25, 118, 210, 0.1);
+    border-radius: 3px;
+    text-align: center;
+    color: #1976d2;
+    margin-right: 5px;
+}
+
+/* 横向扩展的样式调整 */
+.gantt_tree_content {
+    padding-left: 0px !important;
+}
+
+/* 设备类型行样式 */
+.gantt_row[data-type="deviceType"] .gantt_cell:first-child {
+    font-weight: 700;
+    color: #1976d2;
+}
+
+/* 设备行样式 */
+.gantt_row[data-type="device"] .gantt_cell:first-child {
+    padding-left: 10px;
+}
+
+/* 任务行样式 */
+.gantt_row:not([data-type="deviceType"]):not([data-type="device"]) .gantt_cell:first-child {
+    padding-left: 20px;
+}
+
+/* 甘特图样式优化 - 设备类别和设备编号聚类样式 */
+.gantt_task_row.device-type-0 {
+    background-color: rgba(240, 248, 255, 0.5);
+    border-bottom: 1px solid #e0e0f0;
+}
+
+.gantt_task_row.device-type-1 {
+    background-color: rgba(245, 255, 245, 0.5);
+    border-bottom: 1px solid #e0f0e0;
+}
+
+.gantt_task_row.device-type-2 {
+    background-color: rgba(255, 245, 245, 0.5);
+    border-bottom: 1px solid #f0e0e0;
+}
+
+.gantt_task_row.device-type-3 {
+    background-color: rgba(255, 250, 240, 0.5);
+    border-bottom: 1px solid #f0e8d0;
+}
+
+.gantt_task_row.device-type-4 {
+    background-color: rgba(240, 245, 255, 0.5);
+    border-bottom: 1px solid #d0e0f0;
+}
+
+/* 强化设备类别列样式 */
+.grid-cell-deviceType {
+    font-weight: bold;
+    color: #1976D2;
+    background-color: rgba(25, 118, 210, 0.05);
+}
+
+/* 设备编号列样式 */
+.grid-cell-deviceId {
+    font-weight: 500;
+    color: #2196F3;
+}
+
+/* 设备聚类分隔线 */
+.gantt_task_row[data-device-separator="true"] {
+    border-top: 2px solid #90CAF9;
+}
+
+/* 增强设备类别颜色差异 */
+.task-color-0 .gantt_task_content {
+    background-color: #4CAF50;
+}
+
+.task-color-1 .gantt_task_content {
+    background-color: #2196F3;
+}
+
+.task-color-2 .gantt_task_content {
+    background-color: #FFA000;
+}
+
+.task-color-3 .gantt_task_content {
+    background-color: #9C27B0;
+}
+
+.task-color-4 .gantt_task_content {
+    background-color: #F44336;
+}
+
+/* 设备ID分隔符样式 */
+.gantt_task_row[data-device-id-separator="true"] {
+    border-top: 1px dashed #aaa;
+}
+
+/* 增强设备类型和设备ID列的样式 */
+.grid-cell-deviceType {
+    font-weight: bold;
+    color: #2c3e50;
+    background-color: rgba(200, 230, 255, 0.3);
+}
+
+.grid-cell-deviceId {
+    font-weight: bold;
+    color: #34495e;
+}
+
+/* 设备类型颜色 */
+.gantt_task_row.device-type-0 {
+    background-color: rgba(240, 248, 255, 0.6);
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.gantt_task_row.device-type-1 {
+    background-color: rgba(245, 255, 250, 0.6);
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.gantt_task_row.device-type-2 {
+    background-color: rgba(255, 250, 240, 0.6);
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.gantt_task_row.device-type-3 {
+    background-color: rgba(240, 255, 255, 0.6);
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.gantt_task_row.device-type-4 {
+    background-color: rgba(255, 240, 245, 0.6);
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.gantt_task_row[data-device-separator="true"] {
+    border-top: 2px solid #3498db;
+    margin-top: 2px;
+    padding-top: 2px;
+}
+
+/* 任务颜色样式 */
+.task-color-0 .gantt_task_progress, .task-color-0 .gantt_task_content {
+    background-color: rgba(52, 152, 219, 0.8);
+}
+
+.task-color-1 .gantt_task_progress, .task-color-1 .gantt_task_content {
+    background-color: rgba(46, 204, 113, 0.8);
+}
+
+.task-color-2 .gantt_task_progress, .task-color-2 .gantt_task_content {
+    background-color: rgba(241, 196, 15, 0.8);
+}
+
+.task-color-3 .gantt_task_progress, .task-color-3 .gantt_task_content {
+    background-color: rgba(230, 126, 34, 0.8);
+}
+
+.task-color-4 .gantt_task_progress, .task-color-4 .gantt_task_content {
+    background-color: rgba(231, 76, 60, 0.8);
+}
+
+/* 设备分隔符样式 */
+[data-device-separator="true"] {
+    border-top: 2px solid #555;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-device-id-separator="true"] {
+    border-top: 1px dashed #999;
+}
+
+/* 设备类型样式 */
+.device-type-0 {
+    background-color: rgba(200, 230, 255, 0.2);
+}
+
+.device-type-1 {
+    background-color: rgba(230, 255, 200, 0.2);
+}
+
+.device-type-2 {
+    background-color: rgba(255, 230, 200, 0.2);
+}
+
+.device-type-3 {
+    background-color: rgba(230, 200, 255, 0.2);
+}
+
+.device-type-4 {
+    background-color: rgba(200, 255, 230, 0.2);
+}
+
+/* 设备列样式 */
+.grid-cell-deviceType {
+    font-weight: bold;
+    background-color: rgba(240, 240, 240, 0.8);
+}
+
+.grid-cell-deviceId {
+    font-weight: bold;
+    background-color: rgba(240, 240, 240, 0.5);
+}
+
+/* 任务颜色样式 */
+.task-color-0 .gantt_task_progress,
+.task-color-0 .gantt_task_content {
+    background-color: #4285f4;
+}
+
+.task-color-1 .gantt_task_progress,
+.task-color-1 .gantt_task_content {
+    background-color: #34a853;
+}
+
+.task-color-2 .gantt_task_progress,
+.task-color-2 .gantt_task_content {
+    background-color: #fbbc05;
+}
+
+.task-color-3 .gantt_task_progress,
+.task-color-3 .gantt_task_content {
+    background-color: #ea4335;
+}
+
+.task-color-4 .gantt_task_progress,
+.task-color-4 .gantt_task_content {
+    background-color: #673ab7;
+} 

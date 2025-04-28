@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三花实验室设备排期系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- 引入XLSX库处理Excel文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- 引入dhtmlxGantt库用于甘特图展示 -->
+    <link rel="stylesheet" href="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css">
+    <script src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
+    <!-- 添加甘特图加载检查脚本 -->
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            if (typeof gantt === 'undefined') {
+                console.error('甘特图库加载失败，请检查网络连接');
+                setTimeout(function() {
+                    alert('甘特图组件加载失败，可能会影响显示效果。请检查网络连接并刷新页面。');
+                }, 3000);
+            } else {
+                console.log('甘特图库加载成功');
+            }
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <h1>三花实验室设备排期系统</h1>
+        <!-- 右上角上传控件 -->
+        <div class="header-upload-container">
+            <button id="uploadToggleBtn" class="btn-primary">数据上传</button>
+            <div class="upload-panel" id="uploadPanel">
+                <div class="panel-header">
+                    <h3>数据上传</h3>
+                    <span class="close-btn" id="closeUploadBtn">&times;</span>
+                </div>
+                
+                <!-- 设备数据上传 -->
+                <div class="file-upload">
+                    <label for="deviceFile" class="file-label">
+                        <span>选择设备数据文件</span>
+                        <input type="file" id="deviceFile" accept=".xlsx, .xls" multiple />
+                    </label>
+                    <span id="deviceFileName">未选择设备文件</span>
+                </div>
+                
+                <!-- 委托数据上传 -->
+                <div class="file-upload">
+                    <label for="orderFile" class="file-label">
+                        <span>选择委托数据文件</span>
+                        <input type="file" id="orderFile" accept=".xlsx, .xls" multiple />
+                    </label>
+                    <span id="orderFileName">未选择委托文件</span>
+                </div>
+                
+                <div class="upload-actions">
+                    <button id="uploadBtn" class="btn-primary">上传并处理</button>
+                    <a href="sample_template.html" class="btn-outline">模板</a>
+                </div>
+                <div class="upload-info">
+                    <p>请分别上传设备数据和委托数据文件</p>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <!-- 处理中状态区域 -->
+        <section class="processing-section" id="processingSection" style="display: none;">
+            <div class="processing-indicator">
+                <div class="spinner"></div>
+                <p>数据处理中，请稍候...</p>
+            </div>
+            <div class="processing-steps">
+                <div class="step" id="step-reading">
+                    <div class="step-status">⏳</div>
+                    <div class="step-info">
+                        <span class="step-name">读取文件</span>
+                        <span class="step-detail"></span>
+                    </div>
+                </div>
+                <div class="step" id="step-device-data">
+                    <div class="step-status">⏳</div>
+                    <div class="step-info">
+                        <span class="step-name">处理设备数据</span>
+                        <span class="step-detail"></span>
+                    </div>
+                </div>
+                <div class="step" id="step-order-data">
+                    <div class="step-status">⏳</div>
+                    <div class="step-info">
+                        <span class="step-name">处理委托数据</span>
+                        <span class="step-detail"></span>
+                    </div>
+                </div>
+                <div class="step" id="step-scheduling">
+                    <div class="step-status">⏳</div>
+                    <div class="step-info">
+                        <span class="step-name">执行排期算法</span>
+                        <span class="step-detail"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 错误信息区域 -->
+        <section class="error-section" id="errorSection" style="display: none;">
+            <h2>处理错误</h2>
+            <div class="error-container">
+                <div class="error-icon">!</div>
+                <div class="error-message" id="errorMessage">发生错误</div>
+            </div>
+        </section>
+
+        <!-- 查询与筛选面板 - 横向展开 -->
+        <section class="filter-section" id="filterSection" style="display: none;">
+            <div class="filter-controls horizontal">
+                <div class="filter-group">
+                    <label for="deviceFilter">设备编号</label>
+                    <input type="text" id="deviceFilter" placeholder="输入设备编号">
+                </div>
+                <div class="filter-group">
+                    <label for="orderFilter">委托单号</label>
+                    <input type="text" id="orderFilter" placeholder="输入委托单号">
+                </div>
+                <div class="filter-group">
+                    <label for="deviceTypeFilter">设备类别</label>
+                    <select id="deviceTypeFilter">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="filter-group date-range">
+                    <label for="dateRangeStart">时间范围</label>
+                    <div class="date-inputs">
+                        <input type="date" id="dateRangeStart">
+                        <span>至</span>
+                        <input type="date" id="dateRangeEnd">
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button id="filterBtn" class="btn-secondary">应用筛选</button>
+                    <button id="resetFilterBtn" class="btn-outline">重置</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 排期结果区域 - 作为主要视图 -->
+        <section class="results-section" id="resultsSection" style="display: none;">
+            <div class="tabs">
+                <button class="tab-btn" data-tab="table">表格视图</button>
+                <button class="tab-btn active" data-tab="gantt">甘特图</button>
+            </div>
+            
+            <div class="tab-content">
+                <div class="tab-pane active" id="ganttTab">
+                    <div id="ganttChart" class="gantt-container" style="height:700px; width:100%;"></div>
+                </div>
+                <div class="tab-pane" id="tableTab">
+                    <div class="table-container">
+                        <table id="scheduleTable">
+                            <thead>
+                                <tr>
+                                    <th>设备编号</th>
+                                    <th>委托单号</th>
+                                    <th>设备类别</th>
+                                    <th>测试时长(小时)</th>
+                                    <th>计划开始时间</th>
+                                    <th>计划完成时间</th>
+                                    <th>CR值</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scheduleTableBody">
+                                <!-- 排期结果将在这里动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 数据处理摘要 - 移至底部 -->
+        <section class="data-summary-section" id="dataSummarySection" style="display: none;">
+            <h2>数据处理摘要</h2>
+            <div class="summary-container">
+                <div class="summary-item">
+                    <h3>委托数据</h3>
+                    <p id="orderDataCount">0 条记录</p>
+                    <p id="orderDataDetails"></p>
+                </div>
+                <div class="summary-item">
+                    <h3>设备数据</h3>
+                    <p id="deviceDataCount">0 条记录</p>
+                    <p id="deviceDataDetails"></p>
+                </div>
+                <div class="summary-item">
+                    <h3>排期结果</h3>
+                    <p id="scheduleResultCount">0 条记录</p>
+                    <p id="scheduleResultDetails"></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>设备排期系统 &copy; 2023 | <a href="README.md" target="_blank">使用说明</a></p>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html> 

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备排期系统 - 模板下载</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        .template-section {
+            margin-top: 2rem;
+        }
+        
+        .template-info {
+            margin-bottom: 1.5rem;
+        }
+        
+        .download-btn {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>设备排期系统 - Excel模板</h1>
+    </header>
+    
+    <main>
+        <section>
+            <h2>Excel模板说明</h2>
+            <div class="template-info">
+                <p>为帮助您正确准备数据，我们提供了两个Excel模板供下载：</p>
+                <ul>
+                    <li><strong>委托数据模板</strong>：用于录入委托单号、设备类别、测试时长、收样日期、要求完成时间等信息</li>
+                    <li><strong>设备数据模板</strong>：用于录入设备编号、设备类别、历史负载率等信息</li>
+                </ul>
+                <p>您可以分别填写这两个模板文件，然后在系统中上传使用。数据文件中只需包含相关数据字段即可。</p>
+            </div>
+            
+            <div class="template-section">
+                <h3>委托数据模板</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>委托单号</th>
+                                <th>设备类别</th>
+                                <th>测试时长(小时)</th>
+                                <th>收样日期</th>
+                                <th>要求完成时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>SH202304110</td>
+                                <td>高温设备</td>
+                                <td>48</td>
+                                <td>2023-01-05</td>
+                                <td>2023-01-20</td>
+                            </tr>
+                            <tr>
+                                <td>SH202304109</td>
+                                <td>低温设备</td>
+                                <td>72</td>
+                                <td>2023-01-12</td>
+                                <td>2023-01-25</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h3 class="template-section">设备数据模板</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>设备编号</th>
+                                <th>设备类别</th>
+                                <th>历史负载率</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>QLTC-KF-A-0223</td>
+                                <td>高温设备</td>
+                                <td>0.45</td>
+                            </tr>
+                            <tr>
+                                <td>QLTC-KF-A-0224</td>
+                                <td>低温设备</td>
+                                <td>0.35</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="download-btn">
+                <button id="generateOrderTemplateBtn" class="btn-primary">下载委托数据模板</button>
+                <button id="generateDeviceTemplateBtn" class="btn-primary">下载设备数据模板</button>
+                <a href="index.html" class="btn-outline">返回首页</a>
+            </div>
+        </section>
+    </main>
+    
+    <script>
+        // 生成委托数据模板
+        document.getElementById('generateOrderTemplateBtn').addEventListener('click', function() {
+            // 创建工作簿
+            const wb = XLSX.utils.book_new();
+            
+            // 委托数据
+            const orderData = [
+                ["委托单号", "设备类别", "测试时长(小时)", "收样日期", "要求完成时间"],
+                ["SH202304110", "高温设备", 48, new Date("2023-01-05"), new Date("2023-01-20")],
+                ["SH202304109", "低温设备", 72, new Date("2023-01-12"), new Date("2023-01-25")],
+                ["SH202305178", "高温设备", 24, new Date("2023-01-15"), new Date("2023-01-30")]
+            ];
+            
+            // 创建工作表
+            const orderSheet = XLSX.utils.aoa_to_sheet(orderData);
+            
+            // 将工作表添加到工作簿
+            XLSX.utils.book_append_sheet(wb, orderSheet, "委托数据");
+            
+            // 生成Excel文件并下载
+            XLSX.writeFile(wb, "委托数据模板.xlsx");
+        });
+        
+        // 生成设备数据模板
+        document.getElementById('generateDeviceTemplateBtn').addEventListener('click', function() {
+            // 创建工作簿
+            const wb = XLSX.utils.book_new();
+            
+            // 设备数据
+            const deviceData = [
+                ["设备编号", "设备类别", "历史负载率"],
+                ["QLTC-KF-A-0223", "高温设备", 0.45],
+                ["QLTC-KF-A-0224", "低温设备", 0.35],
+                ["QLTC-KF-A-0225", "高温设备", 0.25]
+            ];
+            
+            // 创建工作表
+            const deviceSheet = XLSX.utils.aoa_to_sheet(deviceData);
+            
+            // 将工作表添加到工作簿
+            XLSX.utils.book_append_sheet(wb, deviceSheet, "设备数据");
+            
+            // 生成Excel文件并下载
+            XLSX.writeFile(wb, "设备数据模板.xlsx");
+        });
+    </script>
+</body>
+</html> 
